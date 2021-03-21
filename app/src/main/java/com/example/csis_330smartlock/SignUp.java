@@ -47,7 +47,8 @@ public class SignUp extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                checkDataEntered();
+                if (checkDataEntered())
+                    Toast.makeText(SignUp.this, "Sign up successful", Toast.LENGTH_SHORT).show();
 
 //                if (checkDataEntered()) {
 //                    Handler handler = new Handler(Looper.getMainLooper());

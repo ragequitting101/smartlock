@@ -38,7 +38,8 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                checkDataEntered();
+                if (checkDataEntered())
+                    Toast.makeText(Login.this, "Login successful", Toast.LENGTH_SHORT).show();
 
 //                if (checkDataEntered()) {
 //                    Handler handler = new Handler(Looper.getMainLooper());
