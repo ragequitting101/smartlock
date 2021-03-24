@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "849046796542",
+    "project_id": "csis-330-smartlock",
+    "storage_bucket": "csis-330-smartlock.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:849046796542:android:be512fc97c5a9598ee4daf",
+        "android_client_info": {
+          "package_name": "com.example.csis_330smartlock"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "849046796542-qm0s21sspurgme954rk23257au6rrfkb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIjcojrEEovFa6yfg6okr1X8TsL0GkF80"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "849046796542-qm0s21sspurgme954rk23257au6rrfkb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

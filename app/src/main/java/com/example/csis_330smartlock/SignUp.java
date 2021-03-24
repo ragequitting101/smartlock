@@ -49,7 +49,7 @@ public class SignUp extends AppCompatActivity {
 
                 if (checkDataEntered())
                     Toast.makeText(SignUp.this, "Sign up successful", Toast.LENGTH_SHORT).show();
-
+//
 //                if (checkDataEntered()) {
 //                    Handler handler = new Handler(Looper.getMainLooper());
 //                    handler.post(new Runnable() {
