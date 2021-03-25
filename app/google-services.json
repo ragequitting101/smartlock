@@ -1,33 +1,34 @@
 {
   "project_info": {
-    "project_number": "849046796542",
-    "project_id": "csis-330-smartlock",
-    "storage_bucket": "csis-330-smartlock.appspot.com"
+    "project_number": "1093389424072",
+    "firebase_url": "https://smartlock-ea6fb-default-rtdb.firebaseio.com",
+    "project_id": "smartlock-ea6fb",
+    "storage_bucket": "smartlock-ea6fb.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:849046796542:android:be512fc97c5a9598ee4daf",
+        "mobilesdk_app_id": "1:1093389424072:android:4fe4355f66190f949a9cfd",
         "android_client_info": {
           "package_name": "com.example.csis_330smartlock"
         }
       },
       "oauth_client": [
         {
-          "client_id": "849046796542-qm0s21sspurgme954rk23257au6rrfkb.apps.googleusercontent.com",
+          "client_id": "1093389424072-vmkrkrvdllqlpscsh9acq1g6og83of2m.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCIjcojrEEovFa6yfg6okr1X8TsL0GkF80"
+          "current_key": "AIzaSyDFqUUz3zVtQNlySoGwTeWOZu2YBScq3p8"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "849046796542-qm0s21sspurgme954rk23257au6rrfkb.apps.googleusercontent.com",
+              "client_id": "1093389424072-vmkrkrvdllqlpscsh9acq1g6og83of2m.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

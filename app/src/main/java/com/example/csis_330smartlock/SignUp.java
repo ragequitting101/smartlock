@@ -3,16 +3,12 @@ package com.example.csis_330smartlock;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -35,12 +31,12 @@ public class SignUp extends AppCompatActivity {
     EditText email;
     MaterialButton btnSignUp;
     TextView txtLogin;
+    ProgressBar progressBar;
+
     // [START declare_auth]
     private FirebaseAuth mAuth;
     // [END declare_auth]
     private static final String TAG = "EmailPassword";
-
-    //ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,22 +49,24 @@ public class SignUp extends AppCompatActivity {
         password = findViewById(R.id.password);
         btnSignUp = findViewById(R.id.btnSignUp);
         txtLogin = findViewById(R.id.txtLogin);
-        //progressBar = findViewById(R.id.progress);
+        progressBar = findViewById(R.id.progress);
 
         // [START initialize_auth]
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
         // [END initialize_auth]
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        //FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 if (checkDataEntered()) {
-                    Toast.makeText(SignUp.this, "Details validated", Toast.LENGTH_SHORT).show();
                     createAccount(email.getText().toString(), password.getText().toString());
+                } else {
+                    progressBar.setVisibility(View.INVISIBLE);
+                    btnSignUp.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -104,7 +102,9 @@ public class SignUp extends AppCompatActivity {
     }
 
     boolean checkDataEntered() {
-        //progressBar.setVisibility(View.VISIBLE);
+        // Checks if form is filled correctly
+        progressBar.setVisibility(View.VISIBLE);
+        btnSignUp.setVisibility(View.INVISIBLE);
         if (isEmpty(firstName)) {
             Toast t = Toast.makeText(this, "You must enter first name to register!", Toast.LENGTH_SHORT);
             t.show();
@@ -151,10 +151,6 @@ public class SignUp extends AppCompatActivity {
                             Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
-
-//                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-//                            startActivity(intent);
-//                            finish();
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
@@ -168,16 +164,41 @@ public class SignUp extends AppCompatActivity {
     }
 
     private void reload() {
+        // Go to main menu
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
         finish();
     }
 
     private void updateUI(FirebaseUser user) {
-        UserProfileChangeRequest setDisplayName = new UserProfileChangeRequest.Builder().setDisplayName(firstName.getText().toString()).build();
-        Toast.makeText(this, "Welcome " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(intent);
-        finish();
+        if (user != null) {
+            UserProfileChangeRequest setDisplayName = new UserProfileChangeRequest.Builder().setDisplayName(firstName.getText().toString()).build();
+            user.updateProfile(setDisplayName);
+
+            //Re-authentication to update Display Name
+            mAuth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                // Sign in success, update UI with the signed-in user's information
+                                Toast.makeText(SignUp.this, "Successful Authentication", Toast.LENGTH_SHORT).show();
+                                Log.d(TAG, "signInWithEmail:success");
+                                FirebaseUser user = mAuth.getCurrentUser();
+
+                                //Go to main menu
+                                reload();
+                            } else {
+                                // If sign in fails, display a message to the user.
+                                Log.w(TAG, "signInWithEmail:failure", task.getException());
+                                Toast.makeText(SignUp.this, "Authentication failed.",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+        } else {
+            progressBar.setVisibility(View.INVISIBLE);
+            btnSignUp.setVisibility(View.VISIBLE);
+        }
     }
 }

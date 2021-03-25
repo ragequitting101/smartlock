@@ -47,7 +47,6 @@ public class Login extends AppCompatActivity {
             public void onClick(View view) {
 
                 if (checkDataEntered()) {
-                    Toast.makeText(Login.this, "Login successful", Toast.LENGTH_SHORT).show();
                     signIn(email.getText().toString(), password.getText().toString());
                 }
             }
@@ -107,6 +106,7 @@ public class Login extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
+                            Toast.makeText(Login.this, "Successful Authentication", Toast.LENGTH_SHORT).show();
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
@@ -143,9 +143,13 @@ public class Login extends AppCompatActivity {
     }
 
     private void updateUI(FirebaseUser user) {
-        Toast.makeText(this, "Welcome " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(intent);
-        finish();
+        //Toast.makeText(this, "Welcome " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
+        if (user != null) {
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+            finish();
+        } else {
+            Toast.makeText(this, "Login failed", Toast.LENGTH_SHORT).show();
+        }
     }
 }
