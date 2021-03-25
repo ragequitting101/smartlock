@@ -2,36 +2,32 @@ package com.example.csis_330smartlock;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class MainActivity extends AppCompatActivity {
-    EditText firstName;
-    EditText lastName;
-    EditText password;
-    EditText email;
-    Button btnSignUp;
+
+    Button logout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        SignUp s = new SignUp(MainActivity.this);
-//        s.runSignUp();
-//        firstName = findViewById(R.id.firstName);
-//        lastName = findViewById(R.id.lastName);
-//        email = findViewById(R.id.email);
-//        btnSignUp = findViewById(R.id.btnSignUp);
-//        password = findViewById(R.id.password);
 
-//        btnSignUp.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                SignUp s = new SignUp(MainActivity.this);
-////                s.checkDataEntered(firstName, lastName, email);
-//                s.runSignUp();
-//            }
-//        });
+        logout = findViewById(R.id.btnLogout);
+
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(getApplicationContext(), Login.class);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 }

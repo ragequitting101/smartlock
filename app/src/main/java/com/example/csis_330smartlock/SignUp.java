@@ -1,5 +1,6 @@
 package com.example.csis_330smartlock;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
@@ -17,8 +18,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
-import com.vishnusivadas.advanced_httpurlconnection.PutData;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class SignUp extends AppCompatActivity {
 
@@ -28,6 +35,11 @@ public class SignUp extends AppCompatActivity {
     EditText email;
     MaterialButton btnSignUp;
     TextView txtLogin;
+    // [START declare_auth]
+    private FirebaseAuth mAuth;
+    // [END declare_auth]
+    private static final String TAG = "EmailPassword";
+
     //ProgressBar progressBar;
 
     @Override
@@ -43,52 +55,21 @@ public class SignUp extends AppCompatActivity {
         txtLogin = findViewById(R.id.txtLogin);
         //progressBar = findViewById(R.id.progress);
 
+        // [START initialize_auth]
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
+        // [END initialize_auth]
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                if (checkDataEntered())
-                    Toast.makeText(SignUp.this, "Sign up successful", Toast.LENGTH_SHORT).show();
-//
-//                if (checkDataEntered()) {
-//                    Handler handler = new Handler(Looper.getMainLooper());
-//                    handler.post(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            //Starting Write and Read data with URL
-//                            //Creating array for parameters
-//                            String[] field = new String[4];
-//                            field[0] = "FirstName";
-//                            field[1] = "LastName";
-//                            field[2] = "Email";
-//                            field[3] = "Password";
-//                            //Creating array for data
-//                            String[] data = new String[4];
-//                            data[0] = firstName.getText().toString();
-//                            data[1] = lastName.getText().toString();
-//                            data[2] = email.getText().toString();
-//                            data[3] = password.getText().toString();
-//                            PutData putData = new PutData("http://192.168.8.163/login/signup.php", "POST", field, data);
-//                            if (putData.startPut()) {
-//                                if (putData.onComplete()) {
-//                                    //progressBar.setVisibility(View.GONE);
-//                                    String result = putData.getResult();
-//                                    if (result.equals("Sign Up Success")) {
-//                                        Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
-//                                        Intent intent = new Intent(getApplicationContext(), Login.class);
-//                                        startActivity(intent);
-//                                        finish();
-//                                    } else {
-//                                        Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
-//                                    }
-//                                    Log.i("PutData", result);
-//                                }
-//                            }
-//                        }
-//                    });
-//                } else {
-//
-//                }
+                if (checkDataEntered()) {
+                    Toast.makeText(SignUp.this, "Details validated", Toast.LENGTH_SHORT).show();
+                    createAccount(email.getText().toString(), password.getText().toString());
+                }
             }
         });
 
@@ -100,6 +81,16 @@ public class SignUp extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser != null){
+            reload();
+        }
     }
 
     boolean isEmail(EditText text) {
@@ -139,6 +130,54 @@ public class SignUp extends AppCompatActivity {
             password.setError("Enter a password!");
             return false;
         }
+
+        if (password.getText().toString().length() < 6)
+        {
+            Toast.makeText(this, "Password must have at least 6 characters", Toast.LENGTH_SHORT).show();
+            password.setError("Password must have at least 6 characters");
+            return false;
+        }
         return true;
+    }
+
+    private void createAccount(String email, String password) {
+        // [START create_user_with_email]
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "createUserWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            updateUI(user);
+
+//                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+//                            startActivity(intent);
+//                            finish();
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                            Toast.makeText(SignUp.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                            updateUI(null);
+                        }
+                    }
+                });
+        // [END create_user_with_email]
+    }
+
+    private void reload() {
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void updateUI(FirebaseUser user) {
+        UserProfileChangeRequest setDisplayName = new UserProfileChangeRequest.Builder().setDisplayName(firstName.getText().toString()).build();
+        Toast.makeText(this, "Welcome " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 }
